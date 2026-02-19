@@ -576,37 +576,31 @@
         }
         
         function doUndo(row, col, player) {
-            if (row === undefined || col === undefined) {
-                // 本地悔棋，取最后一步
-                if (history.length === 0) return;
-                const last = history.pop();
-                board[last.row][last.col] = null;
-                
-                const cell = document.querySelector(`.cell[data-row="${last.row}"][data-col="${last.col}"]`);
-                cell.classList.remove('occupied', 'black', 'white', 'last-move');
-                const piece = cell.querySelector('.piece');
-                if (piece) piece.remove();
-                
-                // 恢复悬停提示
-                const hover = document.createElement('div');
-                hover.className = 'piece piece-hover';
-                cell.appendChild(hover);
-            } else {
-                // 远程悔棋
-                board[row][col] = null;
-                
-                const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
-                cell.classList.remove('occupied', 'black', 'white', 'last-move');
-                const piece = cell.querySelector('.piece');
-                if (piece) piece.remove();
-                
-                // 恢复悬停提示
-                const hover = document.createElement('div');
-                hover.className = 'piece piece-hover';
-                cell.appendChild(hover);
+            // 从history中移除最后一步
+            if (history.length > 0) {
+                history.pop();
             }
             
+            // 更新棋盘数据
+            board[row][col] = null;
+            
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.remove('occupied', 'black', 'white', 'last-move');
+            const piece = cell.querySelector('.piece');
+            if (piece) piece.remove();
+            
+            // 恢复悬停提示
+            const hover = document.createElement('div');
+            hover.className = 'piece piece-hover';
+            cell.appendChild(hover);
+            
             // 恢复上一个最后标记
+            if (history.length > 0) {
+                const prev = history[history.length - 1];
+                const prevCell = document.querySelector(`.cell[data-row="${prev.row}"][data-col="${prev.col}"]`);
+                prevCell.classList.add('last-move');
+            }
+        }
             if (history.length > 0) {
                 const prev = history[history.length - 1];
                 const prevCell = document.querySelector(`.cell[data-row="${prev.row}"][data-col="${prev.col}"]`);
