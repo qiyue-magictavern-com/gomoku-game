@@ -28,10 +28,11 @@ const server = http.createServer((req, res) => {
                 res.end('Error loading game');
             } else {
                 res.writeHead(200, { 
-                    'Content-Type': 'text/html',
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Content-Type': 'text/html; charset=utf-8',
+                    'Cache-Control': 'no-cache, no-store, must-revalidate, proxy-revalidate, max-age=0',
                     'Pragma': 'no-cache',
-                    'Expires': '0'
+                    'Expires': '0',
+                    'Surrogate-Control': 'no-store'
                 });
                 res.end(data);
             }
