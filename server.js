@@ -186,10 +186,9 @@ function handleMessage(ws, msg) {
             // 获取最后一个落子的玩家
             const lastMove = room.board[room.board.length - 1];
             const lastPlayer = lastMove.player;
-            
-            // 只有当前玩家才能悔自己的棋
-            if (lastPlayer !== ws.player) return;
 
+            console.log('Undo request:', { wsPlayer: ws.player, lastPlayer: lastPlayer });
+            
             // 移除最后一步
             room.board.pop();
             // 切换回上一个玩家
@@ -205,6 +204,7 @@ function handleMessage(ws, msg) {
             });
             if (room.host) room.host.send(undoMsg);
             if (room.guest) room.guest.send(undoMsg);
+            console.log('Undo success');
             break;
         }
     }
