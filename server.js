@@ -183,13 +183,26 @@ function handleMessage(ws, msg) {
             const room = rooms.get(ws.room);
             if (!room || room.board.length === 0) return;
 
+            // 获取最后一个落子的玩家
+            const lastMove = room.board[room.board.length - 1];
+            const lastPlayer = lastMove.player;
+            
+            // 只有当前玩家才能悔自己的棋
+            if (lastPlayer !== ws.player) return;
+
             // 移除最后一步
             room.board.pop();
             // 切换回上一个玩家
-            room.currentPlayer = room.currentPlayer === 'black' ? 'white' : 'black';
+            room.currentPlayer = lastPlayer;
             room.gameOver = false;
 
-            const undoMsg = JSON.stringify({ type: 'undo', currentPlayer: room.currentPlayer });
+            const undoMsg = JSON.stringify({ 
+                type: 'undo', 
+                row: lastMove.row,
+                col: lastMove.col,
+                player: lastPlayer,
+                currentPlayer: room.currentPlayer 
+            });
             if (room.host) room.host.send(undoMsg);
             if (room.guest) room.guest.send(undoMsg);
             break;

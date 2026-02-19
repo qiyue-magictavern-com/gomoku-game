@@ -398,7 +398,10 @@
                     updateStatus();
                     break;
                 case 'undo':
-                    doUndo();
+                    doUndo(msg.row, msg.col, msg.player);
+                    currentPlayer = msg.currentPlayer;
+                    gameOver = false;
+                    updateStatus();
                     break;
             }
         }
@@ -572,24 +575,36 @@
             ws.send(JSON.stringify({ type: 'undo' }));
         }
         
-        function doUndo() {
-            if (history.length === 0) return;
-            
-            const last = history.pop();
-            board[last.row][last.col] = null;
-            
-            const cell = document.querySelector(`.cell[data-row="${last.row}"][data-col="${last.col}"]`);
-            cell.classList.remove('occupied', 'black', 'white', 'last-move');
-            const piece = cell.querySelector('.piece');
-            if (piece) piece.remove();
-            
-            // 恢复悬停提示
-            const hover = document.createElement('div');
-            hover.className = 'piece piece-hover';
-            cell.appendChild(hover);
-            
-            currentPlayer = last.player;
-            gameOver = false;
+        function doUndo(row, col, player) {
+            if (row === undefined || col === undefined) {
+                // 本地悔棋，取最后一步
+                if (history.length === 0) return;
+                const last = history.pop();
+                board[last.row][last.col] = null;
+                
+                const cell = document.querySelector(`.cell[data-row="${last.row}"][data-col="${last.col}"]`);
+                cell.classList.remove('occupied', 'black', 'white', 'last-move');
+                const piece = cell.querySelector('.piece');
+                if (piece) piece.remove();
+                
+                // 恢复悬停提示
+                const hover = document.createElement('div');
+                hover.className = 'piece piece-hover';
+                cell.appendChild(hover);
+            } else {
+                // 远程悔棋
+                board[row][col] = null;
+                
+                const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+                cell.classList.remove('occupied', 'black', 'white', 'last-move');
+                const piece = cell.querySelector('.piece');
+                if (piece) piece.remove();
+                
+                // 恢复悬停提示
+                const hover = document.createElement('div');
+                hover.className = 'piece piece-hover';
+                cell.appendChild(hover);
+            }
             
             // 恢复上一个最后标记
             if (history.length > 0) {
@@ -598,7 +613,6 @@
                 prevCell.classList.add('last-move');
             }
             
-            updateStatus();
             document.getElementById('winner').style.display = 'none';
         }
         
