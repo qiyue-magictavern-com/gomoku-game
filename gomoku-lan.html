@@ -364,7 +364,7 @@
                     showToast('游戏开始！你是 ' + (myPlayer === 'black' ? '黑方' : '白方'));
                     break;
                 case 'move':
-                    placePiece(msg.row, msg.col, msg.player, false);
+                    placePiece(msg.row, msg.col, msg.player);
                     break;
                 case 'switchPlayer':
                     currentPlayer = msg.player;
@@ -449,6 +449,29 @@
                     boardEl.appendChild(cell);
                 }
             }
+        }
+        
+        // 显示棋子（用于网络同步）
+        function placePiece(row, col, player) {
+            board[row][col] = player;
+            history.push({ row, col, player });
+            
+            const cell = document.querySelector(`.cell[data-row="${row}"][data-col="${col}"]`);
+            cell.classList.add('occupied');
+            cell.classList.add(player);
+            cell.classList.add('last-move');
+            
+            // 移除悬停提示
+            const hoverEl = cell.querySelector('.piece-hover');
+            if (hoverEl) hoverEl.remove();
+            
+            const piece = document.createElement('div');
+            piece.className = 'piece ' + player;
+            cell.appendChild(piece);
+            
+            document.querySelectorAll('.cell.last-move').forEach(el => {
+                if (el !== cell) el.classList.remove('last-move');
+            });
         }
         
         function makeMove(row, col) {
