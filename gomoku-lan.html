@@ -29,10 +29,15 @@
             margin-bottom: 15px;
         }
         
-        .menu, .game { display: none; }
-        .menu.active, .game.active { display: block; }
+        .menu, .game { display: none; width: 100%; }
+        .menu.active, .game.active { 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+        }
         
         .menu { text-align: center; }
+        .game { max-width: 500px; }
         
         .btn {
             display: block;
