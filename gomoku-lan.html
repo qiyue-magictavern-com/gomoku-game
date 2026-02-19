@@ -96,50 +96,50 @@
             padding: 8px;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 320px;
-            height: 320px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
         }
         
         .board {
-            position: relative;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
             width: 304px;
             height: 304px;
             background: #deb887;
+            position: relative;
         }
         
         .cell {
-            position: absolute;
-            width: 20px;
-            height: 20px;
+            position: relative;
+            width: 100%;
+            height: 100%;
             cursor: pointer;
         }
         
         .cell::before {
             content: '';
             position: absolute;
-            width: 100%;
-            height: 1px;
+            width: 1px;
+            height: 100%;
             background: #5c4033;
-            top: 50%;
+            left: 50%;
+            transform: translateX(-50%);
         }
         
         .cell::after {
             content: '';
             position: absolute;
-            width: 1px;
-            height: 100%;
+            width: 100%;
+            height: 1px;
             background: #5c4033;
-            left: 50%;
+            top: 50%;
+            transform: translateY(-50%);
         }
         
-        .cell.edge-top::before { height: 50%; top: 50%; }
-        .cell.edge-bottom::before { height: 50%; bottom: 50%; }
-        .cell.edge-left::after { width: 50%; left: 50%; }
-        .cell.edge-right::after { width: 50%; right: 50%; }
+        /* 边缘的线画半条 */
+        .cell:first-child::before { height: 50%; top: 50%; }
+        .cell:nth-child(15)::after { width: 50%; left: 50%; }
+        .cell:nth-last-child(15)::after { width: 50%; right: 50%; }
+        .cell:last-child::before { height: 50%; bottom: 50%; }
         
         .piece {
             width: 16px;
@@ -397,11 +397,6 @@
         
         function initBoard() {
             const boardEl = document.getElementById('board');
-            // 使用固定尺寸，与 CSS 一致
-            const boardSize = 304;
-            const cellSize = boardSize / BOARD_SIZE; // 约 20.27px
-            const padding = 0;
-            
             boardEl.innerHTML = '';
             board = [];
             
@@ -411,18 +406,9 @@
                     board[i][j] = null;
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.left = (j * cellSize) + 'px';
-                    cell.style.top = (i * cellSize) + 'px';
-                    
-                    if (i === 0) cell.classList.add('edge-top');
-                    if (i === BOARD_SIZE - 1) cell.classList.add('edge-bottom');
-                    if (j === 0) cell.classList.add('edge-left');
-                    if (j === BOARD_SIZE - 1) cell.classList.add('edge-right');
-                    
                     cell.dataset.row = i;
                     cell.dataset.col = j;
                     cell.onclick = () => handleClick(i, j);
-                    
                     boardEl.appendChild(cell);
                 }
             }
