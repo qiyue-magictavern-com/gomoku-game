@@ -397,9 +397,11 @@
         
         function initBoard() {
             const boardEl = document.getElementById('board');
-            const size = BOARD_SIZE * CELL_SIZE;
-            boardEl.style.width = size + PADDING * 2 + 'px';
-            boardEl.style.height = size + PADDING * 2 + 'px';
+            // 使用固定尺寸，与 CSS 一致
+            const boardSize = 304;
+            const cellSize = boardSize / BOARD_SIZE; // 约 20.27px
+            const padding = 0;
+            
             boardEl.innerHTML = '';
             board = [];
             
@@ -409,8 +411,8 @@
                     board[i][j] = null;
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.style.left = (PADDING + j * CELL_SIZE) + 'px';
-                    cell.style.top = (PADDING + i * CELL_SIZE) + 'px';
+                    cell.style.left = (j * cellSize) + 'px';
+                    cell.style.top = (i * cellSize) + 'px';
                     
                     if (i === 0) cell.classList.add('edge-top');
                     if (i === BOARD_SIZE - 1) cell.classList.add('edge-bottom');
