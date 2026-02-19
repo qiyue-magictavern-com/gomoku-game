@@ -115,11 +115,13 @@ function handleMessage(ws, msg) {
             // 通知双方游戏开始
             room.host.send(JSON.stringify({ 
                 type: 'gameStart', 
+                player: 'black',
                 opponent: 'white',
                 currentPlayer: 'black'
             }));
             ws.send(JSON.stringify({ 
                 type: 'gameStart', 
+                player: 'white',
                 opponent: 'black',
                 currentPlayer: 'black'
             }));
@@ -188,6 +190,12 @@ function handleMessage(ws, msg) {
             const lastPlayer = lastMove.player;
 
             console.log('Undo request:', { wsPlayer: ws.player, lastPlayer: lastPlayer });
+            
+            // 只有刚刚落子的人可以悔棋
+            if (lastPlayer !== ws.player) {
+                console.log('Undo rejected: not your move');
+                return;
+            }
             
             // 移除最后一步
             room.board.pop();
