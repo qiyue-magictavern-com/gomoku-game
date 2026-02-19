@@ -178,6 +178,22 @@ function handleMessage(ws, msg) {
             if (room.guest) room.guest.send(restartMsg);
             break;
         }
+
+        case 'undo': {
+            const room = rooms.get(ws.room);
+            if (!room || room.board.length === 0) return;
+
+            // 移除最后一步
+            room.board.pop();
+            // 切换回上一个玩家
+            room.currentPlayer = room.currentPlayer === 'black' ? 'white' : 'black';
+            room.gameOver = false;
+
+            const undoMsg = JSON.stringify({ type: 'undo', currentPlayer: room.currentPlayer });
+            if (room.host) room.host.send(undoMsg);
+            if (room.guest) room.guest.send(undoMsg);
+            break;
+        }
     }
 }
 

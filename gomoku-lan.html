@@ -297,6 +297,7 @@
             <div id="board"></div>
         </div>
         <div class="btn-group">
+            <button class="btn-small" id="undoBtn" onclick="undo()">🔙 悔棋</button>
             <button class="btn-small" onclick="restartGame()">🔄 重新开始</button>
             <button class="btn-small" onclick="backToMenu()">🏠 退出</button>
         </div>
@@ -395,6 +396,9 @@
                     gameOver = false;
                     document.getElementById('winner').style.display = 'none';
                     updateStatus();
+                    break;
+                case 'undo':
+                    doUndo();
                     break;
             }
         }
@@ -559,6 +563,43 @@
             const isMyTurn = currentPlayer === myPlayer;
             status.textContent = (isMyTurn ? '👉 ' : '') + '回合: ' + playerName;
             status.className = 'status ' + currentPlayer;
+        }
+        
+        function undo() {
+            if (history.length === 0 || gameOver) return;
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+            
+            ws.send(JSON.stringify({ type: 'undo' }));
+        }
+        
+        function doUndo() {
+            if (history.length === 0) return;
+            
+            const last = history.pop();
+            board[last.row][last.col] = null;
+            
+            const cell = document.querySelector(`.cell[data-row="${last.row}"][data-col="${last.col}"]`);
+            cell.classList.remove('occupied', 'black', 'white', 'last-move');
+            const piece = cell.querySelector('.piece');
+            if (piece) piece.remove();
+            
+            // 恢复悬停提示
+            const hover = document.createElement('div');
+            hover.className = 'piece piece-hover';
+            cell.appendChild(hover);
+            
+            currentPlayer = last.player;
+            gameOver = false;
+            
+            // 恢复上一个最后标记
+            if (history.length > 0) {
+                const prev = history[history.length - 1];
+                const prevCell = document.querySelector(`.cell[data-row="${prev.row}"][data-col="${prev.col}"]`);
+                prevCell.classList.add('last-move');
+            }
+            
+            updateStatus();
+            document.getElementById('winner').style.display = 'none';
         }
         
         function restartGame() {
