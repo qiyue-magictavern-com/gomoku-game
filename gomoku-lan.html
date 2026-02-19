@@ -2,6 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>五子棋 - 局域网对战</title>
     <style>
@@ -90,14 +93,30 @@
         
         .board-wrapper {
             background: #c4a35a;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .board {
             position: relative;
+            width: 324px;
+            height: 324px;
             background: #deb887;
+            max-width: 90vw;
+            max-height: 90vw;
+        }
+        
+        @media (max-width: 380px) {
+            .board {
+                width: 300px;
+                height: 300px;
+            }
+            .cell { width: 18px; height: 18px; }
+            .piece { width: 14px; height: 14px; }
         }
         
         .cell {
