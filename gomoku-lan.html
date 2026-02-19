@@ -93,30 +93,22 @@
         
         .board-wrapper {
             background: #c4a35a;
-            padding: 10px;
+            padding: 8px;
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 320px;
+            height: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-shrink: 0;
         }
         
         .board {
             position: relative;
-            width: 324px;
-            height: 324px;
+            width: 304px;
+            height: 304px;
             background: #deb887;
-            max-width: 90vw;
-            max-height: 90vw;
-        }
-        
-        @media (max-width: 380px) {
-            .board {
-                width: 300px;
-                height: 300px;
-            }
-            .cell { width: 18px; height: 18px; }
-            .piece { width: 14px; height: 14px; }
         }
         
         .cell {
